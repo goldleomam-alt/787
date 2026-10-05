@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>熊與你的夜晚 - 台灣黑熊保育與人熊共存教育平台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        night: {
+                            950: '#070A0D',
+                            900: '#0B1015',
+                            800: '#151E28',
+                            700: '#222E3C',
+                            600: '#334356',
+                        },
+                        forest: {
+                            900: '#0B2217',
+                            800: '#143827',
+                            700: '#1E533A',
+                            600: '#2B7050',
+                            500: '#3CA072',
+                            400: '#52C790',
+                        },
+                        amber: {
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            400: '#FBBF24',
+                            300: '#FCD34D',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Microsoft JhengHei', 'PingFang TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070A0D;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E533A;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3CA072;
+        }
+        .v-mark-glow {
+            filter: drop-shadow(0px 0px 8px rgba(245, 158, 11, 0.7));
+        }
+        .map-county-path {
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .map-county-path:hover, .map-county-path.active {
+            fill: #3CA072 !important;
+            stroke: #F59E0B !important;
+            stroke-width: 2px;
+            filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5));
+        }
+    </style>
+</head>
+<body class="bg-night-950 text-gray-200 font-sans antialiased selection:bg-forest-600 selection:text-white min-h-screen flex flex-col justify-between">
+
+    <nav class="fixed top-0 left-0 w-full z-50 bg-night-950/90 backdrop-blur-md border-b border-forest-900/60 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="#hero" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 via-forest-700 to-night-900 flex items-center justify-center font-black text-white shadow-md border border-amber-500/40 group-hover:scale-105 transition-transform">
+                        <span class="text-xl text-amber-300 font-serif">V</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold tracking-wider text-white group-hover:text-amber-400 transition-colors">熊與你的夜晚</span>
+                        <span class="text-[10px] text-gray-400 font-light tracking-widest uppercase">Formosan Black Bear Care</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                    <a href="#about" class="text-gray-300 hover:text-amber-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-paw text-xs text-amber-500"></i> 黑熊簡介</a>
+                    <a href="#safety" class="text-gray-300 hover:text-amber-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-xs text-forest-400"></i> 應變守則</a>
+                    <a href="#reports" class="text-gray-300 hover:text-amber-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-map-location-dot text-xs text-amber-500"></i> 通報地圖</a>
+                    <a href="#quiz" class="text-gray-300 hover:text-amber-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-circle-question text-xs text-forest-400"></i> 知識小測驗</a>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="hidden md:block">
+                    <a href="#report-form-section" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-night-950 font-bold px-5 py-2.5 rounded-xl transition-all duration-300 shadow-md hover:shadow-amber-500/20 flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-bullhorn"></i> 目擊回報
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white p-2 text-xl" aria-label="選單">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-night-900 border-b border-forest-900 px-6 py-4 space-y-3">
+            <a href="#about" class="block py-2 text-gray-300 hover:text-amber-400">黑熊簡介</a>
+            <a href="#safety" class="block py-2 text-gray-300 hover:text-amber-400">應變守則</a>
+            <a href="#reports" class="block py-2 text-gray-300 hover:text-amber-400">通報地圖</a>
+            <a href="#quiz" class="block py-2 text-gray-300 hover:text-amber-400">知識小測驗</a>
+            <a href="#report-form-section" class="block text-center bg-amber-500 text-night-950 font-bold py-2.5 rounded-lg mt-2">目擊回報</a>
+        </div>
+    </nav>
+
+    <section id="hero" class="relative pt-28 pb-16 lg:pt-36 lg:pb-28 overflow-hidden bg-gradient-to-b from-night-950 via-night-900 to-forest-900/40">
+        <!-- Ambient forest light background -->
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(30,83,58,0.25),transparent_60%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(245,158,11,0.1),transparent_50%)]"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Hero Text -->
+            <div class="lg:col-span-6 space-y-6 text-left">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-forest-900/80 border border-forest-600/60 text-forest-400 text-xs sm:text-sm font-medium">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    台灣特有亞種瀕臨絕種保育類動物
+                </div>
+                
+                <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-tight">
+                    熊與你的<span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500">夜晚</span>
+                </h1>
+                
+                <p class="text-lg sm:text-xl text-amber-400/90 font-medium tracking-wide">
+                    台灣黑熊保育與人熊共存教育平台
+                </p>
+
+                <p class="text-gray-300 text-base sm:text-lg font-light leading-relaxed">
+                    在濃霧與古木交織的深山夜色中，胸前銘刻著月牙形 V 字白斑的台灣黑熊靜靜穿梭。認識棲地動態、落實無痕山林與防熊應變，讓我們共享一片和諧的山林。
+                </p>
+
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="#about" class="bg-forest-700 hover:bg-forest-600 text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-lg hover:shadow-forest-600/30 flex items-center gap-2 border border-forest-500/30">
+                        <i class="fa-solid fa-tree"></i> 認識台灣黑熊
+                    </a>
+                    <a href="#reports" class="bg-night-800 hover:bg-night-700 text-amber-400 border border-amber-500/40 font-bold px-6 py-3.5 rounded-xl transition-all shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot"></i> 查看全台目擊紀錄
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hero Bear Art Frame (Detailed SVG Formosan Bear in Foggy Forest) -->
+            <div class="lg:col-span-6 relative">
+                <div class="absolute -inset-2 rounded-3xl bg-gradient-to-r from-amber-500/20 to-forest-500/30 blur-2xl"></div>
+                
+                <div class="relative rounded-2xl overflow-hidden border border-forest-700/60 shadow-2xl bg-night-900 group">
+                    <svg viewBox="0 0 800 500" class="w-full h-auto object-cover" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <!-- Forest Dark Gradient -->
+                            <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#081014" />
+                                <stop offset="50%" stop-color="#0E1D19" />
+                                <stop offset="100%" stop-color="#070C0F" />
+                            </linearGradient>
+                            
+                            <!-- Bear Fur Gradient -->
+                            <linearGradient id="bearFur" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#23272B" />
+                                <stop offset="40%" stop-color="#121517" />
+                                <stop offset="100%" stop-color="#080A0B" />
+                            </linearGradient>
+
+                            <!-- V Mark Glowing Gradient -->
+                            <linearGradient id="vMarkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#FFF5D6" />
+                                <stop offset="50%" stop-color="#FDE68A" />
+                                <stop offset="100%" stop-color="#F59E0B" />
+                            </linearGradient>
+
+                            <!-- Fog Overlay Gradient -->
+                            <linearGradient id="fogGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#1E533A" stop-opacity="0.15" />
+                                <stop offset="50%" stop-color="#52C790" stop-opacity="0.08" />
+                                <stop offset="100%" stop-color="#070A0D" stop-opacity="0.4" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Background Forest Environment -->
+                        <rect width="800" height="500" fill="url(#bgGrad)" />
+
+                        <!-- Background Trees -->
+                        <path d="M 60,500 L 90,120 L 120,500 Z M 160,500 L 200,60 L 230,500 Z M 650,500 L 700,90 L 730,500 Z M 550,500 L 580,180 L 610,500 Z" fill="#0A1813" opacity="0.7"/>
+                        <path d="M 0,500 Q 200,420 400,460 T 800,440 L 800,500 Z" fill="#0E241B" />
+
+                        <!-- Moss & Ancient Trees Foreground Left & Right -->
+                        <path d="M -20,0 L 80,0 L 50,500 L -20,500 Z" fill="#09120E" />
+                        <path d="M 0,180 Q 40,200 30,260 Q 50,320 10,380 L 0,400 Z" fill="#18422F" opacity="0.6"/>
+                        <path d="M 720,0 L 820,0 L 820,500 L 700,500 Z" fill="#070D0B" />
+
+                        <!-- Ambient Misty Fog Layers -->
+                        <rect x="0" y="100" width="800" height="300" fill="url(#fogGrad)" />
+                        <ellipse cx="400" cy="380" rx="350" ry="80" fill="#2B7050" opacity="0.12" />
+
+                        <!-- Formosan Black Bear Body -->
+                        <g id="formosan-bear">
+                            <!-- Back & Hind Legs -->
+                            <path d="M 310,380 Q 320,260 380,240 Q 460,230 520,280 Q 550,310 560,420 L 510,420 Q 490,340 450,330 Q 420,330 400,420 Z" fill="url(#bearFur)" />
+                            <!-- Front Body & Paws -->
+                            <path d="M 280,310 Q 310,240 380,240 Q 450,250 480,320 Q 490,390 480,430 L 430,430 Q 430,360 380,350 Q 340,360 330,430 L 280,430 Z" fill="url(#bearFur)" />
+                            <!-- Head & Ears -->
+                            <circle cx="310" cy="230" r="22" fill="#121517" /> <!-- Left Ear -->
+                            <circle cx="390" cy="230" r="22" fill="#121517" /> <!-- Right Ear -->
+                            <path d="M 290,260 C 270,220 310,180 350,180 C 390,180 430,220 410,260 C 390,300 310,300 290,260 Z" fill="url(#bearFur)" />
+                            <!-- Snout -->
+                            <ellipse cx="350" cy="250" rx="28" ry="20" fill="#2A2E33" />
+                            <ellipse cx="350" cy="242" rx="10" ry="7" fill="#070A0D" /> <!-- Nose -->
+
+                            <!-- Eyes -->
+                            <circle cx="325" cy="225" r="4" fill="#FBBF24" opacity="0.9" />
+                            <circle cx="375" cy="225" r="4" fill="#FBBF24" opacity="0.9" />
+                            <circle cx="326" cy="224" r="1.5" fill="#FFFFFF" />
+                            <circle cx="376" cy="224" r="1.5" fill="#FFFFFF" />
+
+                            <!-- ICONIC FORMOSAN BLACK BEAR WHITE V-CHEST MARK -->
+                            <path d="M 315,300 L 350,355 L 385,300 Q 350,315 315,300 Z" fill="url(#vMarkGrad)" class="v-mark-glow" />
+                            <path d="M 322,302 L 350,348 L 378,302 Q 350,312 322,302 Z" fill="#FFFFFF" opacity="0.9" />
+                        </g>
+
+                        <!-- Forest Ground Moss & Ferns -->
+                        <path d="M 0,430 Q 200,410 400,435 T 800,420 L 800,500 L 0,500 Z" fill="#0F2E20" />
+                        <path d="M 250,450 Q 270,420 290,460 M 500,440 Q 520,410 540,450 M 120,460 Q 140,430 160,470" stroke="#3CA072" stroke-width="4" stroke-linecap="round" fill="none" />
+
+                        <!-- Decorative Caption -->
+                        <text x="30" y="475" fill="#FBBF24" font-size="14" font-weight="bold" font-family="sans-serif">FORMOSAN BLACK BEAR • 台灣黑熊</text>
+                        <text x="620" y="475" fill="#52C790" font-size="12" font-family="sans-serif">棲地：台灣深山霧林</text>
+                    </svg>
+
+                    <div class="p-4 bg-night-900 border-t border-forest-800/80 flex items-center justify-between text-xs text-gray-400">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-camera text-amber-400"></i> 主視覺：深山霧林中具特徵 V 字白斑之台灣黑熊</span>
+                        <span class="text-forest-400 font-semibold">特有亞種保育類</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="about" class="py-20 bg-night-900 border-t border-forest-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">台灣黑熊簡介</h2>
+                <div class="w-20 h-1 bg-amber-500 mx-auto rounded-full mb-4"></div>
+                <p class="text-gray-300 text-base sm:text-lg">
+                    台灣黑熊 (Ursus thibetanus formosanus) 是台灣唯一原生的熊類，全台估計僅存 200 至 600 隻，受《野生動物保育法》列為瀕臨絕種保育類動物。
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Feature 1: V-Mark -->
+                <div class="bg-night-800 p-6 rounded-2xl border border-forest-800/60 hover:border-amber-500/50 transition-all shadow-xl group">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-2xl font-black mb-5 group-hover:scale-110 transition-transform">
+                        V
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">胸前 V 字白斑</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        全身覆蓋粗黑毛髮，最顯著特徵為胸前極具辨識度的黃白色「V」字形或新月斑紋，是深山森林中的新月王者。
+                    </p>
+                </div>
+
+                <!-- Feature 2: Omnivorous -->
+                <div class="bg-night-800 p-6 rounded-2xl border border-forest-800/60 hover:border-amber-500/50 transition-all shadow-xl group">
+                    <div class="w-14 h-14 rounded-2xl bg-forest-500/10 border border-forest-500/30 text-forest-400 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">雜食偏植物性</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        雖然屬於食肉目，但超過80%食物為植物（如樟科果實、殼斗科橡實、嫩芽、蜂巢、腐肉等），會隨季節遷徙尋找果實。
+                    </p>
+                </div>
+
+                <!-- Feature 3: Habitat -->
+                <div class="bg-night-800 p-6 rounded-2xl border border-forest-800/60 hover:border-amber-500/50 transition-all shadow-xl group">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-mountain"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">廣闊棲地與敏捷性</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        棲息於海拔 1,000 至 2,500 公尺原住森林，活動範圍廣達數十平方公里。擅長爬樹、游泳，聽覺與嗅覺非常靈敏。
+                    </p>
+                </div>
+
+                <!-- Feature 4: Conservation Status -->
+                <div class="bg-night-800 p-6 rounded-2xl border border-forest-800/60 hover:border-amber-500/50 transition-all shadow-xl group">
+                    <div class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">保育困境與保護</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        正面臨棲地破碎化、道路開發、非法陷阱套索誤傷以及人熊衝突威脅。保育需結合社區巡護與全民安全宣導。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="safety" class="py-20 bg-night-950 border-t border-forest-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-amber-400 text-xs tracking-widest font-bold uppercase">Safety Protocols</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mt-1 mb-4">避熊與野外應變守則</h2>
+                <div class="w-20 h-1 bg-forest-500 mx-auto rounded-full mb-4"></div>
+                <p class="text-gray-300">台灣黑熊個性害羞避人，通常不會主動攻擊人類。謹記「四不一備」原則，能大幅降低風險。</p>
+            </div>
+
+            <!-- Rules Cards Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-night-900 p-6 rounded-2xl border-l-4 border-amber-500 shadow-lg space-y-3">
+                    <div class="text-amber-400 font-bold text-2xl">01. 不奔跑尖叫</div>
+                    <h4 class="text-white font-bold text-lg">保持冷靜，緩慢後退</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        遭遇黑熊時切勿驚慌尖叫或快跑，因為快速移動會引發熊的追捕本能。保持面對黑熊、不直視其眼神，安靜緩慢向後退離開。
+                    </p>
+                </div>
+
+                <div class="bg-night-900 p-6 rounded-2xl border-l-4 border-amber-500 shadow-lg space-y-3">
+                    <div class="text-amber-400 font-bold text-2xl">02. 不爬樹裝死</div>
+                    <h4 class="text-white font-bold text-lg">破解傳統迷思</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        黑熊是極為敏捷的爬樹高手，且具好奇心會靠近嗅聞。「爬樹」或「躺下裝死」都是極危險的錯誤作法。
+                    </p>
+                </div>
+
+                <div class="bg-night-900 p-6 rounded-2xl border-l-4 border-amber-500 shadow-lg space-y-3">
+                    <div class="text-amber-400 font-bold text-2xl">03. 不留留廚餘</div>
+                    <h4 class="text-white font-bold text-lg">落實無痕山林 (LNT)</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        登山露營廚餘與食物必須密封好帶下山。絕對不要餵食黑熊，避免讓熊建立「人類等於食物來源」的危險連結。
+                    </p>
+                </div>
+
+                <div class="bg-night-900 p-6 rounded-2xl border-l-4 border-forest-500 shadow-lg space-y-3">
+                    <div class="text-forest-400 font-bold text-2xl">04. 備防熊器材</div>
+                    <h4 class="text-white font-bold text-lg">熊鈴與胡椒噴霧</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        行經黑熊頻繁出沒山區，可隨身配戴熊鈴或播放聲音讓熊提早規避；亦可備妥合格之防熊胡椒噴霧以備不時之需。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reports" class="py-20 bg-night-900 border-t border-forest-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">全台黑熊目擊與通報系統</h2>
+                <div class="w-20 h-1 bg-amber-500 mx-auto rounded-full mb-4"></div>
+                <p class="text-gray-300">
+                    點擊縣市即可過濾全台灣目擊與痕跡通報紀錄；若您在野外發現痕跡或目擊熊隻，請透過線上表單即時回報。
+                </p>
+            </div>
+
+            <!-- Main Interactive Area Grid -->
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left: Interactive Taiwan Map & County Selector (5 cols) -->
+                <div class="lg:col-span-5 bg-night-800 p-6 rounded-2xl border border-forest-900 shadow-2xl space-y-6">
+                    <div class="flex items-center justify-between border-b border-night-700 pb-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-amber-400"></i> 全台縣市選取地圖
+                        </h3>
+                        <button id="reset-county-filter" class="text-xs bg-night-700 hover:bg-forest-700 text-gray-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-left"></i> 顯示全台灣
+                        </button>
+                    </div>
+
+                    <!-- Selected Indicator -->
+                    <div class="bg-night-900/80 p-3.5 rounded-xl border border-forest-800 text-center flex items-center justify-between">
+                        <span class="text-xs text-gray-400">目前選擇縣市：</span>
+                        <span id="active-county-name" class="text-sm font-bold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/30">全台灣 (全部)</span>
+                    </div>
+
+                    <!-- Simplified Interactive Taiwan SVG Map -->
+                    <div class="relative bg-night-950 p-4 rounded-xl border border-night-700 flex flex-col items-center justify-center">
+                        <svg viewBox="0 0 300 400" class="w-full h-64 sm:h-72 drop-shadow-[0_0_12px_rgba(30,83,58,0.4)]">
+                            <!-- Taiwan Regions Group Path -->
+                            <g id="taiwan-counties-svg">
+                                <!-- North -->
+                                <path d="M 170,30 C 200,40 220,70 210,100 L 170,110 L 140,80 Z" fill="#1E533A" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="宜蘭縣" />
+                                <path d="M 140,20 C 170,25 180,45 170,60 L 130,60 Z" fill="#151E28" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="新北市" />
+                                <path d="M 130,55 C 150,55 160,85 130,95 L 110,75 Z" fill="#151E28" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="桃園市" />
+                                <path d="M 120,90 C 150,100 150,120 120,130 L 100,110 Z" fill="#151E28" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="新竹縣" />
+                                <!-- Central -->
+                                <path d="M 110,125 C 140,135 150,160 110,170 L 90,145 Z" fill="#1E533A" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="苗栗縣" />
+                                <path d="M 110,165 C 150,175 160,205 120,215 L 85,190 Z" fill="#1E533A" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="台中市" />
+                                <path d="M 125,210 C 170,215 175,260 135,270 L 110,235 Z" fill="#1E533A" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="南投縣" />
+                                <!-- East (High Bear Activity Hotspots) -->
+                                <path d="M 165,115 C 200,135 205,250 165,265 L 145,180 Z" fill="#2B7050" stroke="#F59E0B" stroke-width="2" class="map-county-path" data-county="花蓮縣" />
+                                <path d="M 155,265 C 190,280 180,350 145,360 L 130,300 Z" fill="#2B7050" stroke="#F59E0B" stroke-width="2" class="map-county-path" data-county="台東縣" />
+                                <!-- South -->
+                                <path d="M 90,215 C 120,225 120,255 90,265 L 75,240 Z" fill="#151E28" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="嘉義縣" />
+                                <path d="M 105,265 C 135,275 135,320 100,325 L 80,295 Z" fill="#151E28" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="高雄市" />
+                                <path d="M 100,325 C 140,335 135,390 110,395 L 95,360 Z" fill="#1E533A" stroke="#3CA072" stroke-width="1.5" class="map-county-path" data-county="屏東縣" />
+                            </g>
+                            <!-- Visual Hotspot Pins -->
+                            <circle cx="178" cy="190" r="5" class="fill-amber-400 animate-ping opacity-80"/>
+                            <circle cx="178" cy="190" r="4" class="fill-amber-500"/>
+                            <circle cx="160" cy="310" r="5" class="fill-amber-400 animate-ping opacity-80"/>
+                            <circle cx="160" cy="310" r="4" class="fill-amber-500"/>
+                            <circle cx="140" cy="240" r="5" class="fill-amber-400 animate-ping opacity-80"/>
+                            <circle cx="140" cy="240" r="4" class="fill-amber-500"/>
+                        </svg>
+                        <span class="text-[11px] text-gray-400 mt-2">點選地圖區塊或下方縣市標籤可進行篩選</span>
+                    </div>
+
+                    <!-- Quick County Badges -->
+                    <div class="space-y-2">
+                        <span class="text-xs font-semibold text-gray-400">快速選擇縣市：</span>
+                        <div id="county-badges-container" class="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Sighting Table & Report Form (7 cols) -->
+                <div class="lg:col-span-7 space-y-8">
+                    
+                    <!-- Sighting Table Card -->
+                    <div class="bg-night-800 p-6 rounded-2xl border border-forest-900 shadow-2xl space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-list-ul text-amber-400"></i> 目擊與痕跡通報列表
+                            </h3>
+                            <input type="text" id="table-search" placeholder="搜尋地點/描述..." class="bg-night-900 border border-night-700 text-xs px-3 py-2 rounded-lg text-white focus:outline-none focus:border-amber-400">
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-gray-300">
+                                <thead class="bg-night-900 text-gray-400 uppercase tracking-wider border-b border-night-700">
+                                    <tr>
+                                        <th class="py-3 px-3">縣市</th>
+                                        <th class="py-3 px-3">地點 / GPS座標</th>
+                                        <th class="py-3 px-3">日期時間</th>
+                                        <th class="py-3 px-3">類型</th>
+                                        <th class="py-3 px-3">備註說明</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sighting-table-body" class="divide-y divide-night-700/60">
+                                    <!-- Injected via Javascript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Sighting Report Form Section -->
+                    <div id="report-form-section" class="bg-night-800 p-6 sm:p-8 rounded-2xl border border-forest-800/80 shadow-2xl space-y-6">
+                        <div class="border-b border-night-700 pb-4">
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-pen-to-square text-amber-400"></i> 回報熊隻目擊或痕跡數據
+                            </h3>
+                            <p class="text-xs text-gray-400 mt-1">
+                                若您在山區發現爪痕、排遺或目擊黑熊，請填寫此表單，資料將自動存入系統並同步顯示於表格中。
+                            </p>
+                        </div>
+
+                        <form id="sighting-report-form" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">通報縣市 *</label>
+                                    <select id="form-county" required class="w-full bg-night-900 border border-night-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400">
+                                        <option value="">請選擇縣市</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">目擊 / 痕跡類型 *</label>
+                                    <select id="form-type" required class="w-full bg-night-900 border border-night-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400">
+                                        <option value="遠觀個體">遠觀黑熊個體 (距離>50m)</option>
+                                        <option value="近距離遭遇">近距離遭遇 (距離<50m)</option>
+                                        <option value="爪痕痕跡">樹幹爪痕 / 咬痕</option>
+                                        <option value="排遺糞便">黑熊排遺 / 糞便</option>
+                                        <option value="自動相機捕捉">紅外線自動相機拍攝</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">詳細地點 / GPS 座標 *</label>
+                                    <input type="text" id="form-location" required placeholder="例如：23.328, 121.238 或 瓦拉米步道 4.5k" class="w-full bg-night-900 border border-night-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">發現日期與時間 *</label>
+                                    <input type="datetime-local" id="form-datetime" required class="w-full bg-night-900 border border-night-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">狀況說明與細節</label>
+                                <textarea id="form-notes" rows="2" placeholder="簡述熊隻行為（如採食、快速離去）或痕跡特徵..." class="w-full bg-night-900 border border-night-600 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-night-950 font-bold py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-sm">
+                                <i class="fa-solid fa-paper-plane"></i> 送出通報資料
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="py-20 bg-night-950 border-t border-forest-900/50">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="text-amber-400 text-xs tracking-widest font-bold uppercase">Knowledge Check</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mt-1 mb-3">黑熊知識與防熊測驗</h2>
+                <div class="w-16 h-1 bg-amber-500 mx-auto rounded-full mb-3"></div>
+                <p class="text-gray-300 text-sm">通過 5 題精選問答，挑戰成為合格的「山林黑熊保育大使」！</p>
+            </div>
+
+            <div class="bg-night-900 rounded-2xl border border-forest-800 p-6 sm:p-10 shadow-2xl relative">
+                
+                <!-- Quiz Progress Bar -->
+                <div id="quiz-header" class="mb-6 space-y-2">
+                    <div class="flex justify-between text-xs text-gray-400 font-medium">
+                        <span id="quiz-progress-label">問題 1 / 5</span>
+                        <span id="quiz-score-label" class="text-amber-400">目前得分：0</span>
+                    </div>
+                    <div class="w-full bg-night-800 h-2 rounded-full overflow-hidden">
+                        <div id="quiz-progress-bar" class="bg-amber-500 h-full w-1/5 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Quiz Body -->
+                <div id="quiz-body">
+                    <h3 id="quiz-question-text" class="text-lg sm:text-xl font-bold text-white mb-6 leading-relaxed">
+                        載入問題中...
+                    </h3>
+
+                    <div id="quiz-options-container" class="grid gap-3">
+                        <!-- Option buttons generated dynamically -->
+                    </div>
+
+                    <div id="quiz-explanation-box" class="hidden mt-6 p-4 rounded-xl text-xs sm:text-sm border">
+                        <p id="quiz-feedback-title" class="font-bold mb-1"></p>
+                        <p id="quiz-explanation-text" class="text-gray-300 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Quiz Footer Controls -->
+                <div id="quiz-footer" class="mt-8 pt-4 border-t border-night-800 flex justify-end">
+                    <button id="quiz-next-btn" disabled class="bg-forest-700 hover:bg-forest-600 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-all flex items-center gap-2">
+                        下一題 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Quiz Result Screen -->
+                <div id="quiz-result-screen" class="hidden text-center py-8 space-y-6">
+                    <div class="w-20 h-20 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-4xl mx-auto border border-amber-500/30">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="text-2xl font-bold text-white">測驗完成！</h3>
+                        <p class="text-gray-300">您的最終得分：<span id="quiz-final-score" class="text-amber-400 font-black text-3xl">0</span> / 100</p>
+                        <p id="quiz-badge-title" class="text-forest-400 font-bold text-base mt-2"></p>
+                    </div>
+                    <button id="quiz-restart-btn" class="bg-amber-500 hover:bg-amber-600 text-night-950 font-bold px-8 py-3 rounded-xl transition-all shadow-lg">
+                        重新挑戰測驗
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-night-950 border-t border-forest-900/80 text-gray-400 text-xs py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Col 1: Platform Info -->
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2 text-white font-bold text-base">
+                        <span class="text-amber-400 font-serif">V</span> 熊與你的夜晚
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        本平台為台灣黑熊保育教育與通報之推廣網站，致力於提昇公眾對台灣黑熊之正確認知與山林安全防禦意識。
+                    </p>
+                </div>
+
+                <!-- Col 2: Hotline Information -->
+                <div class="space-y-3">
+                    <h4 class="text-white font-bold text-sm">緊急通報與救援專線</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-phone text-amber-400"></i>
+                            <span>林業及自然保育署 24HR 專線：<strong class="text-amber-400 text-sm">0800-000-930</strong></span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-building-shield text-forest-400"></i>
+                            <span>台灣黑熊保育協會：02-2381-2092</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fa-solid fa-kit-medical text-red-400"></i>
+                            <span>野外緊急救助電話：119 / 112</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Mandatory Image Attribution -->
+                <div class="space-y-3">
+                    <h4 class="text-white font-bold text-sm">圖片與資料來源聲明</h4>
+                    <p class="text-amber-300/90 font-medium leading-relaxed bg-night-900 p-3 rounded-lg border border-night-700">
+                        <i class="fa-solid fa-circle-info mr-1"></i> 首頁圖片來源：台灣黑熊林地影像 / 保育團隊授權使用
+                    </p>
+                    <p class="text-gray-500 text-[11px]">
+                        網頁視覺圖案均經精細向量化繪製呈現場景特徵，生態與避熊資料參照農業部林業及自然保育署宣導手冊。
+                    </p>
+                </div>
+            </div>
+
+            <div class="border-t border-night-900 pt-6 text-center text-gray-500">
+                <p>&copy; 熊與你的夜晚 - 台灣黑熊保育與人熊共存教育平台. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Counties List
+        const taiwanCounties = [
+            '宜蘭縣', '花蓮縣', '台東縣', '台中市', '南投縣', 
+            '苗栗縣', '嘉義縣', '高雄市', '屏東縣', '新北市', 
+            '桃園市', '新竹縣', '雲林縣', '台南市', '台北市', '基隆市'
+        ];
+
+        // Initial Sample Sighting Records
+        const defaultSightings = [
+            {
+                county: '花蓮縣',
+                location: '23.328, 121.238 (瓦拉米步道 4.5k)',
+                datetime: '2026-03-15 14:20',
+                type: '遠觀個體',
+                notes: '於溪谷對岸目擊成年黑熊採食果實，距離約70公尺，未有接近攻擊意圖。'
+            },
+            {
+                county: '台東縣',
+                location: '23.189, 120.952 (向陽國家森林遊樂區)',
+                datetime: '2026-02-28 09:10',
+                type: '爪痕痕跡',
+                notes: '樹幹上發現新鮮啃咬痕跡與5條深爪痕，已通知林管處紀錄。'
+            },
+            {
+                county: '台中市',
+                location: '24.225, 120.981 (大雪山森林遊樂區)',
+                datetime: '2026-01-14 19:40',
+                type: '自動相機捕捉',
+                notes: '紅外線自動相機拍獲母熊帶一隻幼熊夜間行經步道。'
+            },
+            {
+                county: '南投縣',
+                location: '23.479, 120.887 (塔塔加鞍部)',
+                datetime: '2025-12-10 11:00',
+                type: '排遺糞便',
+                notes: '步道旁發現新鮮排遺，內含殼斗科堅果外殼與毛髮。'
+            }
+        ];
+
+        let selectedCounty = '全台灣';
+        let sightingData = JSON.parse(localStorage.getItem('bear_sightings_data')) || defaultSightings;
+
+        // Initialize App
+        function initApp() {
+            renderCountyBadges();
+            populateFormCounties();
+            renderSightingsTable();
+            bindMapEvents();
+            initQuiz();
+        }
+
+        // Render Quick Filter Badges
+        function renderCountyBadges() {
+            const container = document.getElementById('county-badges-container');
+            container.innerHTML = '';
+
+            taiwanCounties.forEach(c => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `text-xs px-2.5 py-1 rounded-md transition-all border ${selectedCounty === c ? 'bg-amber-500 text-night-950 font-bold border-amber-400' : 'bg-night-900 text-gray-300 border-night-700 hover:border-forest-500'}`;
+                btn.textContent = c;
+                btn.onclick = () => setCountyFilter(c);
+                container.appendChild(btn);
+            });
+        }
+
+        // Populate Select Dropdown
+        function populateFormCounties() {
+            const select = document.getElementById('form-county');
+            taiwanCounties.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c;
+                select.appendChild(opt);
+            });
+        }
+
+        // Set Active Filter
+        function setCountyFilter(county) {
+            selectedCounty = county;
+            document.getElementById('active-county-name').textContent = county === '全台灣' ? '全台灣 (全部)' : county;
+            
+            // Highlight SVG map
+            document.querySelectorAll('.map-county-path').forEach(path => {
+                if (path.getAttribute('data-county') === county) {
+                    path.classList.add('active');
+                } else {
+                    path.classList.remove('active');
+                }
+            });
+
+            renderCountyBadges();
+            renderSightingsTable();
+        }
+
+        document.getElementById('reset-county-filter').addEventListener('click', () => {
+            setCountyFilter('全台灣');
+        });
+
+        // Bind SVG Map Clicks
+        function bindMapEvents() {
+            document.querySelectorAll('.map-county-path').forEach(path => {
+                path.addEventListener('click', () => {
+                    const c = path.getAttribute('data-county');
+                    setCountyFilter(c);
+                });
+            });
+        }
+
+        // Render Table Data
+        function renderSightingsTable() {
+            const tbody = document.getElementById('sighting-table-body');
+            const keyword = document.getElementById('table-search').value.toLowerCase();
+            tbody.innerHTML = '';
+
+            const filtered = sightingData.filter(item => {
+                const matchCounty = (selectedCounty === '全台灣' || item.county === selectedCounty);
+                const matchSearch = item.location.toLowerCase().includes(keyword) || 
+                                    item.notes.toLowerCase().includes(keyword) ||
+                                    item.county.toLowerCase().includes(keyword);
+                return matchCounty && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500">尚無符合該縣市或關鍵字的通報紀錄</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-night-900/60 transition-colors';
+                tr.innerHTML = `
+                    <td class="py-3 px-3 font-medium text-amber-400">${r.county}</td>
+                    <td class="py-3 px-3 font-mono text-white">${r.location}</td>
+                    <td class="py-3 px-3 text-gray-400">${r.datetime.replace('T', ' ')}</td>
+                    <td class="py-3 px-3"><span class="bg-forest-900 text-forest-400 px-2 py-0.5 rounded border border-forest-600/40">${r.type}</span></td>
+                    <td class="py-3 px-3 text-gray-400 max-w-xs truncate" title="${r.notes}">${r.notes || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('table-search').addEventListener('input', renderSightingsTable);
+
+        // Handle Report Form Submit
+        document.getElementById('sighting-report-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newRecord = {
+                county: document.getElementById('form-county').value,
+                type: document.getElementById('form-type').value,
+                location: document.getElementById('form-location').value,
+                datetime: document.getElementById('form-datetime').value,
+                notes: document.getElementById('form-notes').value
+            };
+
+            sightingData.unshift(newRecord);
+            localStorage.setItem('bear_sightings_data', JSON.stringify(sightingData));
+
+            this.reset();
+            alert('通報資料已成功提交並更新至全台目擊列表中！');
+            renderSightingsTable();
+        });
+
+        const quizQuestions = [
+            {
+                q: "台灣黑熊胸前的醒目標誌特徵是什麼顏色的 V 字形斑紋？",
+                opts: ["鮮紅色", "純黑色", "黃白色或新月白", "深棕色"],
+                ans: 2,
+                exp: "台灣黑熊最大的外觀特徵就是胸前具有鮮明的黃白色或白色 V 字形（或新月形）斑紋。"
+            },
+            {
+                q: "在山林步道近距離意外巧遇台灣黑熊時，下列哪一種作法最【正確】？",
+                opts: ["大聲尖叫並迅速向山下奔跑", "保持冷靜，不直視眼睛，面向熊緩慢退後離開", "立刻爬上身旁的高樹躲避", "躺在地上裝死等待黑熊離開"],
+                answer: 1,
+                ans: 1,
+                exp: "跑步會激發熊的追捕本能；黑熊非常擅長爬樹且會好奇嗅聞裝死者。正確方式是冷靜不尖叫、面向熊緩退。"
+            },
+            {
+                q: "台灣黑熊在食性分類上屬於雜食性，日常飲食中佔比最高的是什麼？",
+                opts: ["高山溪流高山魚類", "山羌與水鹿等肉類", "植物類（樟科果實、橡實、嫩芽）", "山友留下的廚餘"],
+                ans: 2,
+                exp: "研究顯示台灣黑熊超過80%食物為植物性，例如樟科果實、殼斗科橡實與樹木嫩芽。"
+            },
+            {
+                q: "登山露營時，食物與廚餘應該如何處理才能避免吸引黑熊接近營地？",
+                opts: ["掩埋在營地旁土壤中", "掛在樹枝上通風", "使用密封袋包好並確實攜帶下山", "留在營地供野生動物採食"],
+                ans: 2,
+                exp: "落實無痕山林(LNT)，廚餘與食物必須密封帶下山，防止黑熊建立人類與食物的關聯。"
+            },
+            {
+                q: "發現黑熊痕跡或需要緊急通報熊隻救援時，林業及自然保育署的 24 小時專線是？",
+                opts: ["0800-000-930", "0800-000-123", "0800-111-222", "0800-888-999"],
+                ans: 0,
+                exp: "林業及自然保育署 24 小時保育專線為 0800-000-930 (救山林)。"
+            }
+        ];
+
+        let quizCurrentIdx = 0;
+        let quizScore = 0;
+        let quizSelectedOpt = null;
+
+        function initQuiz() {
+            quizCurrentIdx = 0;
+            quizScore = 0;
+            quizSelectedOpt = null;
+            document.getElementById('quiz-header').classList.remove('hidden');
+            document.getElementById('quiz-body').classList.remove('hidden');
+            document.getElementById('quiz-footer').classList.remove('hidden');
+            document.getElementById('quiz-result-screen').classList.add('hidden');
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            quizSelectedOpt = null;
+            const q = quizQuestions[quizCurrentIdx];
+
+            document.getElementById('quiz-progress-label').textContent = `問題 ${quizCurrentIdx + 1} / ${quizQuestions.length}`;
+            document.getElementById('quiz-score-label').textContent = `目前得分：${quizScore}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((quizCurrentIdx + 1) / quizQuestions.length) * 100}%`;
+            document.getElementById('quiz-question-text').textContent = q.q;
+
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            q.opts.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option-btn w-full text-left p-3.5 rounded-xl border border-night-700 bg-night-950/70 hover:bg-night-800 hover:border-amber-500/50 text-gray-200 text-sm transition-all flex items-center justify-between';
+                btn.innerHTML = `<span>${idx + 1}. ${optText}</span> <i class="fa-regular fa-circle text-gray-600"></i>`;
+                btn.onclick = () => selectQuizOption(idx);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('quiz-explanation-box').classList.add('hidden');
+            document.getElementById('quiz-next-btn').disabled = true;
+        }
+
+        function selectQuizOption(optIdx) {
+            if (quizSelectedOpt !== null) return;
+            quizSelectedOpt = optIdx;
+
+            const q = quizQuestions[quizCurrentIdx];
+            const isCorrect = (optIdx === q.ans);
+
+            if (isCorrect) quizScore += 20;
+
+            const buttons = document.querySelectorAll('.quiz-option-btn');
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === q.ans) {
+                    btn.className = 'w-full text-left p-3.5 rounded-xl border-2 border-forest-500 bg-forest-900/40 text-white text-sm flex items-center justify-between font-bold';
+                    btn.querySelector('i').className = 'fa-solid fa-circle-check text-forest-400 text-base';
+                } else if (idx === optIdx && !isCorrect) {
+                    btn.className = 'w-full text-left p-3.5 rounded-xl border-2 border-red-500/80 bg-red-950/30 text-gray-300 text-sm flex items-center justify-between';
+                    btn.querySelector('i').className = 'fa-solid fa-circle-xmark text-red-400 text-base';
+                }
+            });
+
+            const expBox = document.getElementById('quiz-explanation-box');
+            const title = document.getElementById('quiz-feedback-title');
+            const text = document.getElementById('quiz-explanation-text');
+
+            expBox.classList.remove('hidden');
+            if (isCorrect) {
+                expBox.className = 'mt-6 p-4 rounded-xl text-xs sm:text-sm border border-forest-500/50 bg-forest-900/30 text-forest-400';
+                title.textContent = '✓ 回答正確！';
+            } else {
+                expBox.className = 'mt-6 p-4 rounded-xl text-xs sm:text-sm border border-red-500/50 bg-red-950/30 text-red-300';
+                title.textContent = '✕ 回答錯誤！';
+            }
+            text.textContent = q.exp;
+
+            document.getElementById('quiz-score-label').textContent = `目前得分：${quizScore}`;
+            document.getElementById('quiz-next-btn').disabled = false;
+        }
+
+        document.getElementById('quiz-next-btn').addEventListener('click', () => {
+            quizCurrentIdx++;
+            if (quizCurrentIdx < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        });
+
+        function finishQuiz() {
+            document.getElementById('quiz-header').classList.add('hidden');
+            document.getElementById('quiz-body').classList.add('hidden');
+            document.getElementById('quiz-footer').classList.add('hidden');
+
+            const resultScreen = document.getElementById('quiz-result-screen');
+            resultScreen.classList.remove('hidden');
+
+            document.getElementById('quiz-final-score').textContent = quizScore;
+            const badge = document.getElementById('quiz-badge-title');
+            if (quizScore === 100) {
+                badge.textContent = '榮譽稱號：【黑熊守護大師】！滿分掌握保育與防熊知識！';
+            } else if (quizScore >= 60) {
+                badge.textContent = '榮譽稱號：【合格山林大使】！具備良好的野外防熊觀念。';
+            } else {
+                badge.textContent = '榮譽稱號：【黑熊探索新手】！建議重新複習避熊守則喔！';
+            }
+        }
+
+        document.getElementById('quiz-restart-btn').addEventListener('click', initQuiz);
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Initialize on Load
+        window.onload = initApp;
+    </script>
+</body>
+</html>
